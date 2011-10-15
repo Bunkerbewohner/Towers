@@ -111,6 +111,7 @@
     <Compile Include="Cameras\QuakeCamera.cs" />
     <Compile Include="Graphics\DebugDrawer.cs" />
     <Compile Include="Graphics\DebugOutputComponent.cs" />
+    <Compile Include="Graphics\DeferredRenderer.cs" />
     <Compile Include="Physics\PlayerController.cs" />
     <Compile Include="Physics\PlayerPhysicsObject.cs" />
     <Compile Include="World\Actors\Player.cs" />

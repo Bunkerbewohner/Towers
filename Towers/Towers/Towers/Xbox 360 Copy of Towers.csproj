@@ -68,6 +68,7 @@
     <Compile Include="Cameras\QuakeCamera.cs" />
     <Compile Include="Graphics\DebugDrawer.cs" />
     <Compile Include="Graphics\DebugOutputComponent.cs" />
+    <Compile Include="Graphics\DeferredRenderer.cs" />
     <Compile Include="Graphics\TowerInstance.cs" />
     <Compile Include="GUI\FrameRateCounter.cs" />
     <Compile Include="Physics\PhysicsObject.cs" />

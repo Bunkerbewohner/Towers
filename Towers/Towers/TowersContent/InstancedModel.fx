@@ -57,7 +57,7 @@ struct PixelShaderOutput
 	float4 Color : COLOR0;
 	float4 Normal : COLOR1;
 	float4 Depth : COLOR2;
-}
+};
 
 // Vertex shader helper function shared between the two techniques.
 VertexShaderOutput VertexShaderCommon(VertexShaderInput input)
@@ -101,20 +101,20 @@ PixelShaderOutput PixelShaderFunction(VertexShaderOutput input)
 	PixelShaderOutput output = (PixelShaderOutput)0;
 
 	float4 bump = tex2D(NormalMapSampler, input.TexCoord);
-	float3 normal = normalize((bump.xyz - 0.5f) * 2.0f);
-
-	// Compute lighting, using a simple Lambert model.
-    float3 worldNormal = mul(normal, input.Transform);
+	//float3 normal = normalize((bump.xyz - 0.5f) * 2.0f);
     
-    float diffuseAmount = max(-dot(worldNormal, input.LightDirT), 0);
-    
+	// Combine tint color from instance with actual texture color
 	input.Color *= tex2D(DiffuseMapSampler, input.TexCoord);
 
-    float3 lightingResult = saturate(diffuseAmount * DiffuseLight * input.Color + AmbientColor * input.Color);
-    
-    float4 color = float4(lightingResult, 1); 
-
-	output.Color = color;
+	/// Lighting will be deferred...
+	// Compute lighting, using a simple Lambert model.
+    //float3 worldNormal = mul(normal, input.Transform);    
+    //float diffuseAmount = max(-dot(worldNormal, input.LightDirT), 0);
+    //float3 lightingResult = saturate(diffuseAmount * DiffuseLight * input.Color + AmbientColor * input.Color);
+        
+	output.Color = input.Color;
+	output.Normal = bump;
+	output.Depth = input.PositionScreen.z / input.PositionScreen.w;
 
     return output;
 }

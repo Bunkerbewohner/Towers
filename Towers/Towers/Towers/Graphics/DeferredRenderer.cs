@@ -7,12 +7,17 @@ using Microsoft.Xna.Framework;
 
 namespace Towers.Graphics
 {
+    /// <summary>
+    /// Render Job for the deferred renderer.    
+    /// </summary>
     public interface RenderJob
     {
-        void Render()
-        {
-
-        }
+        /// <summary>
+        /// Render geometry for deferred shading.
+        /// The shader must write three color values for albedo color (COLOR0),
+        /// normal (COLOR1) and depth (COLOR2).
+        /// </summary>
+        void Render();
     }
 
     public class DeferredRenderer : DrawableGameComponent
@@ -33,6 +38,12 @@ namespace Towers.Graphics
         RenderTargetBinding[] renderTargetBindings;
 
         List<RenderJob> renderJobs = new List<RenderJob>();
+
+        public DeferredRenderer(Game game)
+            : base(game)
+        {
+
+        }
 
         protected override void LoadContent()
         {
