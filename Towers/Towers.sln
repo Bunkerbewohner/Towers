@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InstancedModelPipeline", "I
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xbox 360 Copy of Towers", "Towers\Towers\Xbox 360 Copy of Towers.csproj", "{46D3B261-E36B-48B5-B703-5A64EBB0B70C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JigLibX", "..\..\JiggleX\JigLibX\JigLibX\JigLibX.csproj", "{8A7CEF45-3501-491D-AEDA-0164060F5348}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -50,7 +52,6 @@ Global
 		{63C09BD2-E1AB-4483-B9C1-F2BA4F0C644D}.Release|Xbox 360.ActiveCfg = Debug|x86
 		{63C09BD2-E1AB-4483-B9C1-F2BA4F0C644D}.Release|Xbox 360.Build.0 = Debug|x86
 		{46D3B261-E36B-48B5-B703-5A64EBB0B70C}.Debug|Mixed Platforms.ActiveCfg = Debug|Xbox 360
-		{46D3B261-E36B-48B5-B703-5A64EBB0B70C}.Debug|Mixed Platforms.Build.0 = Debug|Xbox 360
 		{46D3B261-E36B-48B5-B703-5A64EBB0B70C}.Debug|x86.ActiveCfg = Debug|Xbox 360
 		{46D3B261-E36B-48B5-B703-5A64EBB0B70C}.Debug|Xbox 360.ActiveCfg = Debug|Xbox 360
 		{46D3B261-E36B-48B5-B703-5A64EBB0B70C}.Debug|Xbox 360.Build.0 = Debug|Xbox 360
@@ -62,6 +63,16 @@ Global
 		{46D3B261-E36B-48B5-B703-5A64EBB0B70C}.Release|Xbox 360.ActiveCfg = Release|Xbox 360
 		{46D3B261-E36B-48B5-B703-5A64EBB0B70C}.Release|Xbox 360.Build.0 = Release|Xbox 360
 		{46D3B261-E36B-48B5-B703-5A64EBB0B70C}.Release|Xbox 360.Deploy.0 = Release|Xbox 360
+		{8A7CEF45-3501-491D-AEDA-0164060F5348}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{8A7CEF45-3501-491D-AEDA-0164060F5348}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{8A7CEF45-3501-491D-AEDA-0164060F5348}.Debug|x86.ActiveCfg = Debug|x86
+		{8A7CEF45-3501-491D-AEDA-0164060F5348}.Debug|x86.Build.0 = Debug|x86
+		{8A7CEF45-3501-491D-AEDA-0164060F5348}.Debug|Xbox 360.ActiveCfg = Debug|x86
+		{8A7CEF45-3501-491D-AEDA-0164060F5348}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{8A7CEF45-3501-491D-AEDA-0164060F5348}.Release|Mixed Platforms.Build.0 = Release|x86
+		{8A7CEF45-3501-491D-AEDA-0164060F5348}.Release|x86.ActiveCfg = Release|x86
+		{8A7CEF45-3501-491D-AEDA-0164060F5348}.Release|x86.Build.0 = Release|x86
+		{8A7CEF45-3501-491D-AEDA-0164060F5348}.Release|Xbox 360.ActiveCfg = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

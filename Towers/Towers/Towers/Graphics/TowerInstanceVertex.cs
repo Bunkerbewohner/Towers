@@ -28,10 +28,10 @@ namespace Towers.Graphics
             }
             set
             {
-                TransformRow1 = new Vector4(value.M11, value.M12, value.M13, value.M14);
-                TransformRow2 = new Vector4(value.M21, value.M22, value.M23, value.M24);
-                TransformRow3 = new Vector4(value.M31, value.M32, value.M33, value.M34);
-                TransformRow4 = new Vector4(value.M41, value.M42, value.M43, value.M44);
+                TransformRow1 = new Vector4(value.M11, value.M21, value.M31, value.M41);
+                TransformRow2 = new Vector4(value.M12, value.M22, value.M32, value.M42);
+                TransformRow3 = new Vector4(value.M13, value.M23, value.M33, value.M43);
+                TransformRow4 = new Vector4(value.M14, value.M24, value.M34, value.M44);
             }
         }
 
@@ -50,7 +50,7 @@ namespace Towers.Graphics
                     new VertexElement(16, VertexElementFormat.Vector4, VertexElementUsage.BlendWeight, 1),
                     new VertexElement(32, VertexElementFormat.Vector4, VertexElementUsage.BlendWeight, 2),
                     new VertexElement(48, VertexElementFormat.Vector4, VertexElementUsage.BlendWeight, 3),
-                    new VertexElement(64, VertexElementFormat.Vector3, VertexElementUsage.TextureCoordinate, 0),
+                    new VertexElement(64, VertexElementFormat.Vector3, VertexElementUsage.TextureCoordinate, 1),
                     new VertexElement(76, VertexElementFormat.Color, VertexElementUsage.Color, 0)
                 );
         }
@@ -60,10 +60,10 @@ namespace Towers.Graphics
             Size = size;
             Color = color;
 
-            TransformRow1 = new Vector4(transform.M11, transform.M12, transform.M13, transform.M14);
-            TransformRow2 = new Vector4(transform.M21, transform.M22, transform.M23, transform.M24);
-            TransformRow3 = new Vector4(transform.M31, transform.M32, transform.M33, transform.M34);
-            TransformRow4 = new Vector4(transform.M41, transform.M42, transform.M43, transform.M44);
+            TransformRow1 = new Vector4(transform.M11, transform.M21, transform.M31, transform.M41);
+            TransformRow2 = new Vector4(transform.M12, transform.M22, transform.M32, transform.M42);
+            TransformRow3 = new Vector4(transform.M13, transform.M23, transform.M33, transform.M43);
+            TransformRow4 = new Vector4(transform.M14, transform.M24, transform.M34, transform.M44);
         }
 
         public VertexDeclaration VertexDeclaration

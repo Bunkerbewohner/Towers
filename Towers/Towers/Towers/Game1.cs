@@ -11,6 +11,11 @@ using Microsoft.Xna.Framework.Media;
 using Towers.Graphics;
 using Towers.Cameras;
 using Towers.GUI;
+using JigLibX.Physics;
+using JigLibX.Collision;
+using Towers.World.Objects;
+using Towers.World.Actors;
+using System.Globalization;
 
 namespace Towers
 {
@@ -21,20 +26,30 @@ namespace Towers
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        SpriteFont spriteFont;
 
         TowerRenderer towerRenderer;
         ICamera camera;
 
+        PhysicsSystem physics;
+        DebugDrawer ddrawer;
+
         Color backgroundColor = Color.Green;
         
-        int numInitialTowers = 10000 * 20 ;
-        int minPos = -2500 * 2;
-        int maxPos = 2500 * 2;
+        const int numInitialTowers = 2000;
+        int minPos = -500 * 1;
+        int maxPos = 500 * 1;
 
-        int minSize = 10;
-        int maxSize = 70;
+        float numInstances = numInitialTowers;
+        int numPolygons = 0;
+
+        int minSize = 4;
+        int maxSize = 20;
 
         Random rand = new Random();
+
+        List<Tower> towers = new List<Tower>();
+        Player player;
 
         public Game1()
         {
@@ -46,7 +61,19 @@ namespace Towers
 
             graphics.PreferredBackBufferWidth = 1280;
             graphics.PreferredBackBufferHeight = 720;
-            graphics.PreferMultiSampling = true;            
+            graphics.PreferMultiSampling = true;
+
+            physics = new PhysicsSystem();
+            physics.CollisionSystem = new CollisionSystemSAP();
+            physics.EnableFreezing = true;
+            physics.SolverType = PhysicsSystem.Solver.Fast;
+            physics.CollisionSystem.UseSweepTests = true;
+            physics.NumCollisionIterations = 10;
+            physics.NumContactIterations = 10;
+            physics.NumPenetrationRelaxtionTimesteps = 15;
+
+            physics.Gravity = new Vector3(0, -50, 0);
+            physics.Gravity = Vector3.Zero;
         }
 
         /// <summary>
@@ -63,8 +90,17 @@ namespace Towers
             camera = new QuakeCamera(this);
             Components.Add(camera);
 
+            ddrawer = new DebugDrawer(this);
+            Components.Add(ddrawer);
+
             var fpsCounter = new FrameRateCounter(this);
             Components.Add(fpsCounter);
+
+            Components.Add(new DebugOutput(this));
+
+            player = new Player(new Vector3(0, maxPos, 0), camera as QuakeCamera);
+            physics.AddController(player.PhysicsController);
+            player.PhysicsController.EnableController();            
 
             base.Initialize();
         }
@@ -78,32 +114,39 @@ namespace Towers
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            Tower ground = new Tower(new Vector3(0, minPos, 0), new Vector3(maxPos - minPos, 5, maxPos - minPos),
+                Matrix.Identity, Color.Gray);
+            towerRenderer.AddInstance(ground.GraphicsInstance);
+
+            spriteFont = Content.Load<SpriteFont>("DefaultFont");
+
             AddInstances(numInitialTowers);            
         }
 
-        TowerInstance CreateRandomInstance()
+        Tower CreateRandomTower()
         {
             Vector3 pos = new Vector3(rand.Next(minPos, maxPos),
-                    rand.Next(minPos, maxPos), rand.Next(minPos, maxPos));
+                    rand.Next(minPos, maxPos), rand.Next(minPos, maxPos));            
 
-            Matrix transform = Matrix.CreateTranslation(pos);
-            transform = Matrix.Transpose(transform);
+            Matrix transform = Matrix.Identity;            
 
             Vector3 size = new Vector3(rand.Next(minSize, maxSize),
                 rand.Next(minSize, maxSize), rand.Next(minSize, maxSize));
 
             Color color = new Color(rand.Next(255), rand.Next(255), rand.Next(255));
 
-            return new TowerInstance(transform, size, color);
+            return new Tower(pos, size, transform, color);
         }
 
-        void AddInstances(int n)
-        {
+        void AddInstances(float n)
+        {                        
             List<TowerInstance> instances = new List<TowerInstance>();
 
             for (int i = 0; i < n; i++)
             {
-                instances.Add(CreateRandomInstance());
+                Tower tower = CreateRandomTower();
+                instances.Add(tower.GraphicsInstance);
+                towers.Add(tower);
             }
 
             towerRenderer.AddInstances(instances);
@@ -111,6 +154,12 @@ namespace Towers
 
         void RemoveInstances(int n)
         {
+            int num = Math.Min(n, towers.Count - 1);
+            int index = towers.Count - num;
+
+            if (num > 0)
+                towers.RemoveRange(index, num);
+            
             towerRenderer.RemoveInstances(n);
         }
 
@@ -130,34 +179,62 @@ namespace Towers
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            // Update physics engine
+            float timeStep = (float)gameTime.ElapsedGameTime.Ticks / TimeSpan.TicksPerSecond;
+            if (timeStep < 1.0f / 60.0f) physics.Integrate(timeStep);
+            else physics.Integrate(1.0f / 60.0f);
+
+            // Update towers based on new physical state
+            foreach (var tower in towers)
+                tower.Update(gameTime);
+
+            player.Update(gameTime);
+
+            camera.Position = player.Position + new Vector3(0, player.Size.Y * 0.5f, 0);
+
             // Allows the game to exit
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
-            const int f = 20;
+            float f = 200;
+            if (gameTime.ElapsedGameTime.Milliseconds > 0) f *= (gameTime.ElapsedGameTime.Milliseconds / 1000.0f);
+            else f = 0;                        
 
 #if WINDOWS
             KeyboardState keyboard = Keyboard.GetState();
+
+            if (keyboard.IsKeyDown(Keys.LeftControl)) f *= 10;
 
             if (keyboard.IsKeyDown(Keys.LeftAlt) && keyboard.IsKeyDown(Keys.Enter))
                 graphics.ToggleFullScreen();
 
             if (keyboard.IsKeyDown(Keys.OemPlus))
-                AddInstances(f);
+                numInstances += f;
             else if (keyboard.IsKeyDown(Keys.OemMinus))
-                RemoveInstances(f);
+                numInstances -= f;
 
 #endif
 #if XBOX || true
             GamePadState gamepad = GamePad.GetState(PlayerIndex.One);
 
             if (gamepad.IsButtonDown(Buttons.RightTrigger))
-                AddInstances(f);
+                numInstances += f;
             else if (gamepad.IsButtonDown(Buttons.LeftTrigger))
-                RemoveInstances(f);
+                numInstances -= f;
 #endif
 
+            SyncNumInstances();
+
             base.Update(gameTime);
+        }
+
+        private void SyncNumInstances()
+        {
+            int d = (int)numInstances - towers.Count;
+            if (d == 0) return;
+
+            if (d > 0) AddInstances((int)d);
+            else RemoveInstances((int)d);
         }
 
         /// <summary>
@@ -168,9 +245,29 @@ namespace Towers
         {
             GraphicsDevice.Clear(backgroundColor);
 
-            // TODO: Add your drawing code here
+            GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
+            GraphicsDevice.BlendState = BlendState.Opaque;
+
+            /*
+            foreach (Tower tower in towers)
+            {
+                var wf = tower.PhysicsObject.PhysicsSkin.GetLocalSkinWireframe();
+                tower.PhysicsObject.PhysicsBody.TransformWireframe(wf);
+                ddrawer.DrawShape(wf);
+            }
+            //*/
 
             base.Draw(gameTime);
+
+            spriteBatch.Begin();
+
+            spriteBatch.DrawString(spriteFont, "#Instances = " + towerRenderer.NumInstances, 
+                new Vector2(20, 20), Color.White);
+
+            spriteBatch.DrawString(spriteFont, "#Polygons = " + String.Format(CultureInfo.InvariantCulture, 
+                "{0:n}", towerRenderer.NumPolygons), new Vector2(20, 40), Color.White);
+
+            spriteBatch.End();
         }
     }
 }

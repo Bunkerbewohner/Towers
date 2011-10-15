@@ -24,6 +24,19 @@ namespace Towers.Graphics
         TowerInstanceVertex[] instanceVertices;
         List<TowerInstance> instances;
         DynamicVertexBuffer instanceVertexBuffer;
+        Texture2D diffuseMap, normalMap;
+
+        int numPolygons;
+
+        public int NumPolygons
+        {
+            get { return numPolygons; }
+        }
+
+        public int NumInstances
+        {
+            get { return instances.Count; }
+        }
 
         public TowerRenderer(Game game)
             : base(game)
@@ -77,7 +90,9 @@ namespace Towers.Graphics
 
         protected override void LoadContent()
         {
-            model = Game.Content.Load<Model>("Tower");
+            model = Game.Content.Load<Model>("Kiste1");
+            normalMap = Game.Content.Load<Texture2D>("Kiste1Normal");
+            diffuseMap = Game.Content.Load<Texture2D>("Kiste1Diffuse");
 
             base.LoadContent();
         }
@@ -95,6 +110,7 @@ namespace Towers.Graphics
         private void DrawInstances()
         {
             if (instances.Count == 0) return;
+            numPolygons = 0;
 
             // Gather instance transform matrices into a single array.
             Array.Resize(ref instanceVertices, instances.Count);
@@ -141,6 +157,8 @@ namespace Towers.Graphics
                     effect.Parameters["World"].SetValue(Matrix.Identity);
                     effect.Parameters["View"].SetValue(camera.View);
                     effect.Parameters["Projection"].SetValue(camera.Projection);
+                    effect.Parameters["NormalMap"].SetValue(normalMap);
+                    effect.Parameters["DiffuseMap"].SetValue(diffuseMap);
 
                     // Draw all the instance copies in a single call.
                     foreach (EffectPass pass in effect.CurrentTechnique.Passes)
@@ -151,6 +169,8 @@ namespace Towers.Graphics
                                                                meshPart.NumVertices, meshPart.StartIndex,
                                                                meshPart.PrimitiveCount, instanceVertices.Length);
                     }
+
+                    numPolygons += meshPart.PrimitiveCount * instanceVertices.Length;
                 }
             }
         }

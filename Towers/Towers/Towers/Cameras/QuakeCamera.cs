@@ -25,7 +25,7 @@ namespace Towers.Cameras
     }
 #endif
 
-    class QuakeCamera : GameComponent, ICamera
+    public class QuakeCamera : GameComponent, ICamera
     {
         Matrix viewMatrix;
         Matrix projectionMatrix;
@@ -92,6 +92,7 @@ namespace Towers.Cameras
                 UpdateViewMatrix();
             }
 
+            /*
             if (keyState.IsKeyDown(Keys.Up) || keyState.IsKeyDown(Keys.W))      //Forward
                 AddToCameraPosition(new Vector3(0, 0, -1));
             if (keyState.IsKeyDown(Keys.Down) || keyState.IsKeyDown(Keys.S))    //Backward
@@ -104,6 +105,7 @@ namespace Towers.Cameras
                 AddToCameraPosition(new Vector3(0, 1, 0));
             if (keyState.IsKeyDown(Keys.Y))                                     //Down
                 AddToCameraPosition(new Vector3(0, -1, 0));
+            */
 #endif
         }
 

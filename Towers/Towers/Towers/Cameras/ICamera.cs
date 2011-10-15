@@ -12,6 +12,6 @@ namespace Towers.Cameras
 
         Matrix Projection { get; }
 
-        Vector3 Position { get; }
+        Vector3 Position { get; set; }
     }
 }
